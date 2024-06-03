@@ -1,0 +1,20 @@
+version: '3.3'
+services:
+  debian:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        user: ${USER}
+        uid: ${UID}
+        group: ${GROUP}
+        gid: ${GID}
+    container_name: pennix_debian_workspace
+    network_mode: host
+    hostname: debian
+    volumes:
+      - /work/home/pfu/devel/pennix_debian_volume:/home/${USER}
+    tty: true
+    environment:
+      - HTTP_PROXY=${HTTP_PROXY}
+      - HTTPS_PROXY=${HTTPS_PROXY}
