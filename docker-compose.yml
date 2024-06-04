@@ -9,13 +9,14 @@ services:
         uid: ${UID}
         group: ${GROUP}
         gid: ${GID}
+        SSH_PUBLIC_KEY: ${SSH_PUBLIC_KEY}
     container_name: pennix_debian_workspace
     network_mode: host
-    hostname: debian
+    hostname: ${HOSTNAME}
     ports:
-      - "8022:22"
+      - "2222:2222"
     volumes:
-      - /work/home/pfu/devel/pennix_debian_volume:/home/${USER}
+      - ${HOST_HOME_VOLUME}:/home/${USER}
     tty: true
     environment:
       - HTTP_PROXY=${HTTP_PROXY}
