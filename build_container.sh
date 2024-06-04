@@ -8,9 +8,8 @@ show_help() {
     echo "Usage: ./run_container.sh [options]"
     echo ""
     echo "Options:"
-    echo "  -f, --force            Force remove existing container and rebuild"
-    echo "  -k, --key <public_key> Specify the SSH public key to use"
-    echo "  -h, --help             Display this help message"
+    echo "  -f, --force    Force remove existing container and rebuild"
+    echo "  -h, --help     Display this help message"
 }
 
 # 检查 Docker 服务状态
@@ -23,26 +22,14 @@ check_docker_service() {
 
 # 解析命令行参数
 FORCE=false
-SSH_PUBLIC_KEY=""
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         -f|--force) FORCE=true ;;
-        -k|--key) SSH_PUBLIC_KEY="$2"; shift ;;
         -h|--help) show_help; exit 0 ;;
         *) echo "Unknown parameter passed: $1"; show_help; exit 1 ;;
     esac
     shift
 done
-
-# 如果未提供 SSH_PUBLIC_KEY 参数，则从 .env 文件中加载
-if [ -z "$SSH_PUBLIC_KEY" ]; then
-    if [ -f .env ]; then
-        source .env
-        SSH_PUBLIC_KEY=${SSH_PUBLIC_KEY:-$(cat ~/.ssh/id_rsa.pub)}
-    else
-        SSH_PUBLIC_KEY=$(cat ~/.ssh/id_rsa.pub)
-    fi
-fi
 
 # 检查容器是否存在
 container_exists() {
@@ -58,8 +45,7 @@ remove_container() {
 # 构建并运行容器
 build_and_run_container() {
     echo "Building and running container..."
-    docker-compose build --build-arg SSH_PUBLIC_KEY="$SSH_PUBLIC_KEY"
-    docker-compose up -d
+    docker-compose up -d --build
 }
 
 # 主逻辑
