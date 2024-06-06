@@ -1,15 +1,23 @@
 #!/bin/bash
 
 # 容器名称
-CONTAINER_NAME="pennix_debian_workspace"
+DEFAULT_CONTAINER_NAME="pennix_debian_workspace"
+CONTAINER_NAME=$DEFAULT_CONTAINER_NAME
+
+# 初始化参数
+FORCE=false
+PROXY_URL=""
 
 # 显示帮助信息
+# 显示帮助信息
 show_help() {
-    echo "Usage: ./run_container.sh [options]"
+    echo "Usage: ./build_container.sh [options]"
     echo ""
     echo "Options:"
-    echo "  -f, --force    Force remove existing container and rebuild"
-    echo "  -h, --help     Display this help message"
+    echo "  -f, --force          Force remove existing container and rebuild"
+    echo "  -p, --proxy-url      Proxy URL to use"
+    echo "  -n, --name           Container name (default: $DEFAULT_CONTAINER_NAME)"
+    echo "  -h, --help           Display this help message"
 }
 
 # 检查 Docker 服务状态
@@ -21,15 +29,21 @@ check_docker_service() {
 }
 
 # 解析命令行参数
-FORCE=false
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         -f|--force) FORCE=true ;;
+        -p|--proxy-url) PROXY_URL="$2"; shift ;;
+        -n|--name) CONTAINER_NAME="$2"; shift ;;
         -h|--help) show_help; exit 0 ;;
         *) echo "Unknown parameter passed: $1"; show_help; exit 1 ;;
     esac
     shift
 done
+
+# 如果未指定 --proxy-url，则尝试从环境变量中获取代理配置
+if [[ -z "$PROXY_URL" ]]; then
+    PROXY_URL=${HTTP_PROXY:-${http_proxy:-${HTTPS_PROXY:-${https_proxy}}}}
+fi
 
 # 检查容器是否存在
 container_exists() {
@@ -45,7 +59,14 @@ remove_container() {
 # 构建并运行容器
 build_and_run_container() {
     echo "Building and running container..."
-    docker-compose up -d --build
+    if [[ -n "$PROXY_URL" ]]; then
+        export HTTP_PROXY=$PROXY_URL
+        export HTTPS_PROXY=$PROXY_URL
+        export http_proxy=$PROXY_URL
+        export https_proxy=$PROXY_URL
+    fi
+    docker-compose build
+    docker-compose up -d
 }
 
 # 主逻辑

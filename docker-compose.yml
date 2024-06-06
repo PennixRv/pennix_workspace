@@ -10,6 +10,8 @@ services:
         group: ${GROUP}
         gid: ${GID}
         SSH_PUBLIC_KEY: ${SSH_PUBLIC_KEY}
+        HTTP_PROXY: ${HTTP_PROXY}
+        HTTPS_PROXY: ${HTTPS_PROXY}
     container_name: pennix_debian_workspace
     network_mode: host
     hostname: ${HOSTNAME}
@@ -21,3 +23,5 @@ services:
     environment:
       - HTTP_PROXY=${HTTP_PROXY}
       - HTTPS_PROXY=${HTTPS_PROXY}
+      - http_proxy=${HTTP_PROXY}
+      - https_proxy=${HTTPS_PROXY}
