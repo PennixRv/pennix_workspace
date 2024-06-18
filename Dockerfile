@@ -10,11 +10,11 @@ ARG HTTPS_PROXY
 
 ENV LANG=en_US.UTF-8 \
     LANGUAGE=en_US:en \
-    LC_ALL=en_US.UTF-8 \
-    HTTP_PROXY=${HTTP_PROXY} \
-    HTTPS_PROXY=${HTTPS_PROXY} \
-    http_proxy=${HTTP_PROXY} \
-    https_proxy=${HTTPS_PROXY}
+    LC_ALL=en_US.UTF-8
+    # # HTTP_PROXY=${HTTP_PROXY} \
+    # # HTTPS_PROXY=${HTTPS_PROXY} \
+    # # http_proxy=${HTTP_PROXY} \
+    # # https_proxy=${HTTPS_PROXY}
 
 RUN echo "deb http://mirrors.tuna.tsinghua.edu.cn/debian/ bookworm main contrib non-free non-free-firmware\n\
 deb http://mirrors.tuna.tsinghua.edu.cn/debian/ bookworm-updates main contrib non-free non-free-firmware\n\
